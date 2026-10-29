@@ -349,11 +349,8 @@ export default function About() {
                   value: personal.email,
                   icon: "✉️",
                 },
-                {
-                  label: "Phone",
-                  value: personal.phone,
-                  icon: "📞",
-                },
+               
+        
                 {
                   label: "Status",
                   value: personal.status,

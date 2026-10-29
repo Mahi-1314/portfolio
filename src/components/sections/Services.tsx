@@ -1,3 +1,4 @@
+
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { useRef, useState } from "react";
 import { motion, useInView, AnimatePresence } from "framer-motion";
@@ -16,7 +17,6 @@ interface Service {
 }
 
 // ── Framer variants
-
 const containerVariants = {
   hidden: {},
   show: { transition: { staggerChildren: 0.08 } },
@@ -122,6 +122,7 @@ function HeroCard({ service }: { service: Service }) {
         transition={{ duration: 0.4 }}
         aria-hidden
       />
+
       <div
         className="absolute top-0 right-0 w-64 h-64 rounded-full pointer-events-none"
         style={{
@@ -201,6 +202,7 @@ function HeroCard({ service }: { service: Service }) {
                 {tag}
               </span>
             ))}
+
             {service.available && (
               <span
                 className="text-[10px] font-bold px-2.5 py-1 rounded-full flex items-center gap-1.5 ml-auto"
@@ -228,7 +230,6 @@ function HeroCard({ service }: { service: Service }) {
 }
 
 // ── Mini Card
-
 function MiniCard({ service, index }: { service: Service; index: number }) {
   const [hovered, setHovered] = useState(false);
 
@@ -298,12 +299,14 @@ function MiniCard({ service, index }: { service: Service; index: number }) {
           className="w-8 h-[2px] rounded-full mb-2"
           style={{ background: service.color }}
         />
+
         <h3
           className="text-sm font-bold mb-1"
           style={{ color: "var(--text1)", fontFamily: "var(--font)" }}
         >
           {service.title}
         </h3>
+
         <p
           className="text-[11px] leading-[1.6]"
           style={{ color: "var(--text2)" }}
@@ -333,7 +336,6 @@ function MiniCard({ service, index }: { service: Service; index: number }) {
 }
 
 // ── Bottom Stats Row
-
 function StatsRow() {
   const ref = useRef(null);
   const inView = useInView(ref, { once: true });
@@ -368,6 +370,7 @@ function StatsRow() {
           >
             {s.value}
           </span>
+
           <span
             className="text-[10px] sm:text-xs font-medium mt-1 text-center"
             style={{ color: "var(--text2)" }}
@@ -381,13 +384,15 @@ function StatsRow() {
 }
 
 // ── Main Component
-
 export default function Services() {
   const gridRef = useRef(null);
   const inView = useInView(gridRef, { once: true, margin: "-60px" });
 
-  const [heroService] = services;
-  const miniServices = services.slice(1);
+  // Fix: explicitly type the services array
+  const typedServices: Service[] = services as Service[];
+
+  const [heroService] = typedServices;
+  const miniServices: Service[] = typedServices.slice(1);
 
   return (
     <section
