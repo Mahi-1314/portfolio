@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState, useCallback } from "react";
+import { useEffect, useState } from "react";
 import type { IconType } from "react-icons";
 import { personal, phrases, socials, stats, Resume } from "../../data/index";
 import {
@@ -27,56 +27,38 @@ function useTypewriter(words: string[], speed = 75): string {
   const [text, setText] = useState("");
   const [idx, setIdx] = useState(0);
   const [del, setDel] = useState(false);
+
   useEffect(() => {
     const word = words[idx];
+
     const timer = setTimeout(
       () => {
-        if (!del && text === word) return setDel(true);
+        if (!del && text === word) {
+          setDel(true);
+          return;
+        }
+
         if (del && text === "") {
           setDel(false);
-          return setIdx((i) => (i + 1) % words.length);
+          setIdx((i) => (i + 1) % words.length);
+          return;
         }
-        setText((p) => (del ? p.slice(0, -1) : word.slice(0, p.length + 1)));
+
+        setText((p) =>
+          del ? p.slice(0, -1) : word.slice(0, p.length + 1),
+        );
       },
       del ? speed / 2 : speed,
     );
+
     return () => clearTimeout(timer);
   }, [text, del, idx, words, speed]);
+
   return text;
 }
 
 export default function Hero() {
-  const imgRef = useRef<HTMLDivElement>(null);
-  const rafRef = useRef<number | null>(null);
   const typed = useTypewriter(phrases);
-
-  const handleMouseMove = useCallback((e: React.MouseEvent<HTMLDivElement>) => {
-    if (rafRef.current) return;
-    const el = e.currentTarget;
-    rafRef.current = requestAnimationFrame(() => {
-      const rect = el.getBoundingClientRect();
-      const x = e.clientX - rect.left;
-      const y = e.clientY - rect.top;
-      const dx = (x - rect.width / 2) / (rect.width / 2);
-      const dy = (y - rect.height / 2) / (rect.height / 2);
-      el.style.transform = `perspective(700px) rotateY(${dx * 6}deg) rotateX(${-dy * 6}deg) translate3d(0,0,0)`;
-      el.style.setProperty("--mx", `${(x / rect.width) * 100}%`);
-      el.style.setProperty("--my", `${(y / rect.height) * 100}%`);
-      rafRef.current = null;
-    });
-  }, []);
-
-  const handleMouseLeave = useCallback(
-    (e: React.MouseEvent<HTMLDivElement>) => {
-      if (rafRef.current) {
-        cancelAnimationFrame(rafRef.current);
-        rafRef.current = null;
-      }
-      e.currentTarget.style.transform =
-        "perspective(700px) rotateY(0deg) rotateX(0deg) translate3d(0,0,0)";
-    },
-    [],
-  );
 
   return (
     <section
@@ -85,64 +67,19 @@ export default function Hero() {
       className="relative min-h-screen flex items-center overflow-hidden"
       style={{ background: "var(--bg0)" }}
     >
-      <style>{`
-        @keyframes cardEntry { from{opacity:0;transform:translate3d(0,32px,0) scale(0.96)} to{opacity:1;transform:translate3d(0,0,0) scale(1)} }
-        @keyframes nameEntry { from{opacity:0;transform:translate3d(0,10px,0)} to{opacity:1;transform:translate3d(0,0,0)} }
-        @keyframes glowPulse { 0%,100%{opacity:0.5} 50%{opacity:1} }
-        .hero-card { animation:cardEntry 0.8s cubic-bezier(0.22,1,0.36,1) both; transform-style:preserve-3d; will-change:transform; }
-        .hero-card-name { animation:nameEntry 0.6s cubic-bezier(0.22,1,0.36,1) 0.5s both; }
-        .hero-card-glow { position:absolute; inset:-1px; border-radius:2.1rem; z-index:0; background:conic-gradient(from 0deg,transparent 20%,var(--accent) 40%,var(--green) 60%,transparent 80%); animation:glowPulse 3s ease-in-out infinite; will-change:opacity; }
-        .hero-card-img img { transition:transform 0.5s cubic-bezier(0.22,1,0.36,1); will-change:transform; }
-        .hero-card-img:hover img { transform:scale(1.05) translate3d(0,0,0); }
-        .spotlight { position:absolute; inset:0; border-radius:2rem; pointer-events:none; z-index:20; opacity:0; transition:opacity 0.3s; background:radial-gradient(300px circle at var(--mx,50%) var(--my,50%),rgba(255,255,255,0.07),transparent 70%); }
-        .hero-card:hover .spotlight { opacity:1; }
-        .hero-btn { transition:transform 0.2s ease; }
-        .hero-btn:hover { transform:scale(1.05) translate3d(0,0,0); }
-        .hero-social { transition:transform 0.2s ease; }
-        .hero-social:hover { transform:translate3d(0,-4px,0); }
-      `}</style>
+      <div className="section-wrap w-full relative z-10 py-24">
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-10 lg:gap-12 items-center">
 
-      {/* Decorative background elements — hidden from screen readers */}
-      <div
-        aria-hidden="true"
-        className="absolute inset-0 pointer-events-none"
-        style={{
-          backgroundImage:
-            "linear-gradient(rgba(99,102,241,0.04) 1px,transparent 1px),linear-gradient(90deg,rgba(99,102,241,0.04) 1px,transparent 1px)",
-          backgroundSize: "64px 64px",
-        }}
-      />
-      <div
-        aria-hidden="true"
-        className="absolute top-0 left-0 w-[600px] h-[600px] rounded-full pointer-events-none"
-        style={{
-          background:
-            "radial-gradient(circle,rgba(99,102,241,0.12) 0%,transparent 70%)",
-          transform: "translate(-30%,-30%)",
-        }}
-      />
-      <div
-        aria-hidden="true"
-        className="absolute bottom-0 right-0 w-[500px] h-[500px] rounded-full pointer-events-none"
-        style={{
-          background:
-            "radial-gradient(circle,rgba(16,217,160,0.08) 0%,transparent 70%)",
-          transform: "translate(20%,20%)",
-        }}
-      />
-
-      <div className="section-wrap w-full relative z-10">
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-10 lg:gap-6 items-center">
-          {/* ── Left: Text content ── */}
+          {/* Left: Text Content */}
           <div className="flex flex-col gap-5 order-2 lg:order-1 items-center lg:items-start text-center lg:text-left">
-            {/* Status badge */}
+
+            {/* Availability Badge */}
             <div
               role="status"
-              aria-label="Availability status: Open to Opportunities"
-              className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full text-[11px] font-bold tracking-[0.1em] uppercase"
+              aria-label="Availability status"
+              className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full text-[10px] sm:text-[11px] font-bold tracking-[0.1em] uppercase"
               style={{
-                background: "linear-gradient(145deg,var(--bg2),var(--bg3))",
-                boxShadow: "var(--neu-out-sm)",
+                background: "var(--bg2)",
                 border: "1px solid var(--border)",
                 color: "var(--accent-h)",
               }}
@@ -150,40 +87,41 @@ export default function Hero() {
               <span
                 aria-hidden="true"
                 className="w-2 h-2 rounded-full flex-shrink-0"
-                style={{
-                  background: "var(--green)",
-                  boxShadow: "0 0 6px var(--green)",
-                  animation: "blink 1.5s ease infinite",
-                }}
+                style={{ background: "var(--green)" }}
               />
               {personal.status}
             </div>
 
-            {/* ── FIXED: h1 with proper id for aria-labelledby ── */}
+            {/* Main Heading */}
             <h1
               id="hero-heading"
-              className="font-black leading-[1.05] tracking-tight text-[clamp(2.6rem,6.5vw,4.8rem)]"
-              style={{ fontFamily: "var(--font)", color: "var(--text1)" }}
+              className="font-black leading-[1.12] tracking-tight text-[clamp(2rem,4.5vw,3.5rem)]"
+              style={{
+                fontFamily: "var(--font)",
+                color: "var(--text1)",
+              }}
             >
-              Hi, I'm <br />
+              Hi, I&apos;m
+              <br />
               <span className="g-text">{personal.name}</span>
             </h1>
 
-            {/* Typewriter role title — aria-live so screen readers announce changes */}
+            {/* Typewriter Role */}
             <div className="flex items-center gap-3 justify-center lg:justify-start">
               <div
                 aria-hidden="true"
-                className="w-8 h-[2px] rounded-full flex-shrink-0"
+                className="w-7 h-[2px] rounded-full flex-shrink-0"
                 style={{ background: "var(--accent)" }}
               />
+
               <p
                 aria-live="polite"
                 aria-label={`Current role: ${typed || phrases[0]}`}
-                className="text-base font-semibold"
+                className="text-sm sm:text-base font-semibold"
                 style={{
                   color: "var(--text2)",
                   fontFamily: "var(--mono)",
-                  minWidth: 200,
+                  minWidth: 180,
                   margin: 0,
                 }}
               >
@@ -192,41 +130,45 @@ export default function Hero() {
               </p>
             </div>
 
+            {/* Bio */}
             <p
-              className="text-[0.92rem] leading-[1.85] max-w-[480px] mx-auto lg:mx-0"
+              className="text-sm leading-[1.8] max-w-[440px] mx-auto lg:mx-0"
               style={{ color: "var(--text2)" }}
             >
               {personal.bio}
             </p>
 
-            {/* CTA Buttons */}
+            {/* Action Buttons */}
             <div className="flex flex-wrap gap-3 justify-center lg:justify-start">
               <a
                 href="#projects"
-                className="hero-btn flex items-center gap-2 px-6 py-3 rounded-xl text-sm font-bold text-white"
+                className="hero-btn flex items-center gap-2 px-5 py-3 rounded-xl text-sm font-bold text-white"
                 style={{
                   background:
                     "linear-gradient(135deg,var(--accent),var(--accent-h))",
-                  boxShadow: "0 4px 20px var(--accent-glow)",
+                  transition: "transform 0.2s ease",
                 }}
-                aria-label="View Pawan Tripathi's projects"
+                aria-label="View my projects"
               >
-                View Projects <FiArrowRight size={14} aria-hidden="true" />
+                View Projects
+                <FiArrowRight size={14} aria-hidden="true" />
               </a>
+
               <a
                 href={Resume.link}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="hero-btn flex items-center gap-2 px-6 py-3 rounded-xl text-sm font-bold"
+                className="hero-btn flex items-center gap-2 px-5 py-3 rounded-xl text-sm font-bold"
                 style={{
-                  background: "linear-gradient(145deg,var(--bg2),var(--bg3))",
-                  boxShadow: "var(--neu-out-sm)",
+                  background: "var(--bg2)",
                   border: "1px solid var(--border)",
                   color: "var(--text1)",
+                  transition: "transform 0.2s ease",
                 }}
-                aria-label="Download Pawan Tripathi's CV (opens in new tab)"
+                aria-label="Download my CV"
               >
-                <FiDownload size={14} aria-hidden="true" /> Download CV
+                <FiDownload size={14} aria-hidden="true" />
+                Download CV
               </a>
             </div>
 
@@ -240,23 +182,23 @@ export default function Hero() {
                 <div
                   key={s.label}
                   role="listitem"
-                  className="flex flex-col items-center px-5 py-3 rounded-2xl"
+                  className="flex flex-col items-center px-4 py-3 rounded-xl"
                   style={{
-                    background: "linear-gradient(145deg,var(--bg2),var(--bg3))",
-                    boxShadow: "var(--neu-out-sm)",
+                    background: "var(--bg2)",
                     border: "1px solid var(--border)",
                   }}
                 >
                   <span
-                    className="font-black text-xl g-text leading-none"
+                    className="font-black text-lg g-text leading-none"
                     style={{ fontFamily: "var(--font)" }}
                     aria-label={`${s.value} ${s.label}`}
                   >
                     {s.value}
                   </span>
+
                   <span
                     aria-hidden="true"
-                    className="text-[10px] font-semibold uppercase tracking-wider mt-1"
+                    className="text-[9px] font-semibold uppercase tracking-wider mt-1"
                     style={{ color: "var(--text3)" }}
                   >
                     {s.label}
@@ -273,21 +215,21 @@ export default function Hero() {
             >
               {socials.map((s) => {
                 const Icon = SOCIAL_ICONS[s.icon];
+
                 return (
                   <a
                     key={s.name}
                     href={s.url}
                     target="_blank"
                     rel="noopener noreferrer"
-                    aria-label={`Visit Pawan Tripathi on ${s.name} (opens in new tab)`}
+                    aria-label={`Visit my ${s.name}`}
                     role="listitem"
                     className="hero-social w-9 h-9 rounded-xl flex items-center justify-center"
                     style={{
-                      background:
-                        "linear-gradient(145deg,var(--bg2),var(--bg3))",
-                      boxShadow: "var(--neu-out-sm)",
+                      background: "var(--bg2)",
                       border: "1px solid var(--border)",
                       color: s.color,
+                      transition: "transform 0.2s ease",
                     }}
                   >
                     {Icon && <Icon size={14} aria-hidden="true" />}
@@ -297,101 +239,62 @@ export default function Hero() {
             </div>
           </div>
 
-          {/* ── Right: Profile Image ── */}
-          <div className="order-1 lg:order-2 flex justify-center lg:justify-end">
+          {/* Right: Profile Image */}
+      <div className="order-1 lg:order-2 flex justify-center lg:justify-end">
             <div
-              className="relative"
-              style={{ width: "min(100%,420px)", padding: "1.5rem" }}
+              className="relative w-full"
+              style={{ maxWidth: "300px" }}
             >
               <div
-                aria-hidden="true"
-                className="absolute inset-0 rounded-3xl blur-3xl pointer-events-none"
+                className="overflow-hidden rounded-[1.5rem]"
                 style={{
-                  background:
-                    "linear-gradient(135deg,var(--accent),var(--green))",
-                  opacity: 0.13,
-                }}
-              />
-              <div
-                className="relative"
-                style={{
-                  width: "min(100%,360px)",
-                  padding: "1px",
-                  borderRadius: "2.1rem",
+                  background: "var(--bg2)",
+                  border: "1px solid var(--border)",
+                  boxShadow: "0 20px 50px rgba(0,0,0,0.3)",
                 }}
               >
-                <div aria-hidden="true" className="hero-card-glow" />
-                <div
-                  ref={imgRef}
-                  className="hero-card relative rounded-[2rem] overflow-hidden z-10"
+                {/* Profile Photo */}
+                <img
+                  src={MYImg}
+                  alt="Mahi Rupabhinda — Engineering Student from Gujarat, India"
+                  className="w-full object-cover object-top block"
                   style={{
-                    background: "linear-gradient(145deg,var(--bg2),var(--bg3))",
-                    boxShadow:
-                      "0 0 0 1px var(--border),0 25px 60px rgba(0,0,0,0.5),inset 0 1px 0 rgba(255,255,255,0.06)",
+                    aspectRatio: "4/5",
+                    maxHeight: "375px",
                   }}
-                  onMouseMove={handleMouseMove}
-                  onMouseLeave={handleMouseLeave}
+                  loading="eager"
+                  decoding="async"
+                  fetchPriority="high"
+                  width={300}
+                  height={375}
+                />
+
+                {/* Profile Details */}
+                <div
+                  className="flex flex-col items-center gap-1 px-5 py-4"
+                  style={{
+                    borderTop: "1px solid var(--border)",
+                    background: "var(--bg1)",
+                  }}
                 >
-                  <div aria-hidden="true" className="spotlight" />
-                  <div className="hero-card-img relative overflow-hidden">
-                    <div
-                      aria-hidden="true"
-                      className="absolute inset-0 z-10 pointer-events-none"
-                      style={{
-                        background:
-                          "linear-gradient(to bottom,transparent 55%,rgba(10,13,22,0.97) 100%)",
-                      }}
-                    />
-                    {/* ── FIXED: descriptive alt text ── */}
-                    <img
-                      src={MYImg}
-                      alt="Pawan Tripathi — Frontend Developer from Uttarakhand, India"
-                      className="w-full object-cover object-top block"
-                      style={{ aspectRatio: "4/5" }}
-                      loading="eager"
-                      decoding="async"
-                      fetchPriority="high"
-                      width={360}
-                      height={450}
-                    />
-                  </div>
-                  <div
-                    className="hero-card-name flex flex-col items-center gap-1 px-6 pt-4 pb-6"
+                  <p
+                    className="m-0 font-bold text-center leading-tight"
                     style={{
-                      borderTop: "1px solid var(--border)",
-                      background:
-                        "linear-gradient(145deg,var(--bg1),var(--bg2))",
+                      fontSize: "clamp(1.1rem,2.5vw,1.4rem)",
+                      letterSpacing: "-0.02em",
+                      color: "var(--text1)",
+                      fontFamily: "var(--font)",
                     }}
                   >
-                    <div
-                      aria-hidden="true"
-                      className="w-8 h-[2px] rounded-full mb-1"
-                      style={{
-                        background:
-                          "linear-gradient(90deg,var(--accent),var(--green))",
-                      }}
-                    />
-                    <p
-                      className="m-0 font-black text-center leading-tight"
-                      style={{
-                        fontSize: "clamp(1.5rem,4vw,1.9rem)",
-                        letterSpacing: "-0.02em",
-                        color: "var(--text1)",
-                        fontFamily: "var(--font)",
-                      }}
-                    >
-                      {personal.name}
-                    </p>
-                    <p
-                      className="m-0 text-center uppercase tracking-[0.13em] text-[0.72rem] font-semibold opacity-80"
-                      style={{
-                        color: "var(--accent)",
-                        fontFamily: "var(--font)",
-                      }}
-                    >
-                      {personal.role}
-                    </p>
-                  </div>
+                    {personal.name}
+                  </p>
+
+                  <p
+                    className="m-0 text-center uppercase tracking-[0.12em] text-[10px] font-semibold"
+                    style={{ color: "var(--accent)" }}
+                  >
+                    {personal.role}
+                  </p>
                 </div>
               </div>
             </div>
@@ -399,25 +302,37 @@ export default function Hero() {
         </div>
       </div>
 
-      {/* Scroll indicator — decorative */}
+      {/* Scroll Indicator */}
       <div
         aria-hidden="true"
-        className="absolute bottom-2 left-1/2 -translate-x-1/2 flex flex-col items-center gap-1.5 pointer-events-none"
-        style={{ opacity: 0.35 }}
+        className="absolute bottom-3 left-1/2 -translate-x-1/2 flex flex-col items-center gap-1 pointer-events-none"
+        style={{ opacity: 0.3 }}
       >
         <span
-          className="text-[9px] font-bold uppercase tracking-widest"
+          className="text-[9px] font-semibold uppercase tracking-widest"
           style={{ color: "var(--text3)" }}
         >
           Scroll
         </span>
+
         <div
-          className="w-px h-10 rounded-full"
+          className="w-px h-7 rounded-full"
           style={{
             background: "linear-gradient(to bottom,var(--accent),transparent)",
           }}
         />
       </div>
+
+      {/* Button Hover Effects */}
+      <style>{`
+        .hero-btn:hover {
+          transform: translateY(-2px);
+        }
+
+        .hero-social:hover {
+          transform: translateY(-3px);
+        }
+      `}</style>
     </section>
   );
 }

@@ -1,3 +1,4 @@
+
 import { useRef, useCallback } from "react";
 import { personal, socials } from "../../data/index";
 import type { IconType } from "react-icons";
@@ -10,7 +11,9 @@ import {
   FaFacebook,
 } from "react-icons/fa";
 import { SiLeetcode } from "react-icons/si";
-import MYImg from "../../assets/About.webp";
+
+// Using your own photo from the Hero section
+import MYImg from "../../assets/Hero.webp";
 
 const SOCIAL_ICONS: Record<string, IconType> = {
   FaGithub,
@@ -23,12 +26,10 @@ const SOCIAL_ICONS: Record<string, IconType> = {
 };
 
 export default function About() {
-  // ── FIXED: Cache rect to avoid forced reflow on every mousemove ──
   const cardRef = useRef<HTMLDivElement>(null);
   const rectRef = useRef<DOMRect | null>(null);
   const rafRef = useRef<number | null>(null);
 
-  // Read rect once on mouseenter (not on every mousemove)
   const handleMouseEnter = useCallback(() => {
     if (cardRef.current) {
       rectRef.current = cardRef.current.getBoundingClientRect();
@@ -36,23 +37,31 @@ export default function About() {
   }, []);
 
   const handleMouseMove = useCallback((e: React.MouseEvent<HTMLDivElement>) => {
-    if (rafRef.current) return; // throttle via rAF
+    if (rafRef.current) return;
+
     const rect = rectRef.current;
+
     if (!rect || !cardRef.current) return;
 
     rafRef.current = requestAnimationFrame(() => {
       const el = cardRef.current;
+
       if (!el || !rect) {
         rafRef.current = null;
         return;
       }
+
       const x = e.clientX - rect.left;
       const y = e.clientY - rect.top;
+
       const dx = (x - rect.width / 2) / (rect.width / 2);
       const dy = (y - rect.height / 2) / (rect.height / 2);
+
       el.style.transform = `perspective(700px) rotateY(${dx * 5}deg) rotateX(${-dy * 5}deg)`;
+
       el.style.setProperty("--mx", `${(x / rect.width) * 100}%`);
       el.style.setProperty("--my", `${(y / rect.height) * 100}%`);
+
       rafRef.current = null;
     });
   }, []);
@@ -63,7 +72,9 @@ export default function About() {
         cancelAnimationFrame(rafRef.current);
         rafRef.current = null;
       }
+
       rectRef.current = null;
+
       e.currentTarget.style.transform =
         "perspective(700px) rotateY(0deg) rotateX(0deg)";
     },
@@ -74,9 +85,13 @@ export default function About() {
     <section
       id="about"
       aria-labelledby="about-heading"
-      style={{ background: "var(--bg1)", overflow: "hidden" }}
+      style={{
+        background: "var(--bg1)",
+        overflow: "hidden",
+      }}
     >
       <div className="section-wrap">
+        {/* Section heading */}
         <div className="mb-14">
           <div
             className="flex items-center gap-2 text-xs font-bold tracking-[0.12em] uppercase mb-3"
@@ -89,6 +104,7 @@ export default function About() {
             />
             About Me
           </div>
+
           <h2
             id="about-heading"
             className="font-black leading-tight tracking-tight text-[clamp(2rem,4.5vw,3.2rem)]"
@@ -98,28 +114,107 @@ export default function About() {
           </h2>
         </div>
 
+        {/* Main content */}
         <div className="grid grid-cols-1 lg:grid-cols-[1fr_1.6fr] gap-10 items-start">
-          {/* ── Image Card ── */}
+          {/* Image card and social links */}
           <div className="flex flex-col items-center lg:items-start gap-6">
             <div className="relative w-full max-w-[320px] mx-auto lg:mx-0">
               <style>{`
-                @keyframes aboutCardEntry { from{opacity:0;transform:translateY(24px) scale(0.97)} to{opacity:1;transform:translateY(0) scale(1)} }
-                @keyframes aboutGlowPulse { 0%,100%{opacity:0.25} 50%{opacity:0.45} }
-                @keyframes aboutNameEntry { from{opacity:0;transform:translateY(8px)} to{opacity:1;transform:translateY(0)} }
-                .about-card { animation:aboutCardEntry 0.75s cubic-bezier(0.22,1,0.36,1) both; transform-style:preserve-3d; transition:transform 0.3s cubic-bezier(0.22,1,0.36,1); will-change:transform; }
-                .about-card-glow { position:absolute; inset:-1px; border-radius:1rem; z-index:0; background:conic-gradient(from 0deg,transparent 20%,var(--accent) 40%,var(--green) 60%,transparent 80%); animation:aboutGlowPulse 3s ease-in-out infinite; }
-                .about-card-img img { transition:transform 0.5s cubic-bezier(0.22,1,0.36,1); will-change:transform; }
-                .about-card:hover .about-card-img img { transform:scale(1.04); }
-                .about-spotlight { position:absolute; inset:0; border-radius:inherit; pointer-events:none; z-index:20; opacity:0; transition:opacity 0.3s; background:radial-gradient(260px circle at var(--mx,50%) var(--my,50%),rgba(255,255,255,0.06),transparent 70%); }
-                .about-card:hover .about-spotlight { opacity:1; }
-                .about-card-name { animation:aboutNameEntry 0.5s cubic-bezier(0.22,1,0.36,1) 0.4s both; }
+                @keyframes aboutCardEntry {
+                  from {
+                    opacity: 0;
+                    transform: translateY(24px) scale(0.97);
+                  }
+                  to {
+                    opacity: 1;
+                    transform: translateY(0) scale(1);
+                  }
+                }
+
+                @keyframes aboutGlowPulse {
+                  0%,100% {
+                    opacity: 0.25;
+                  }
+                  50% {
+                    opacity: 0.45;
+                  }
+                }
+
+                @keyframes aboutNameEntry {
+                  from {
+                    opacity: 0;
+                    transform: translateY(8px);
+                  }
+                  to {
+                    opacity: 1;
+                    transform: translateY(0);
+                  }
+                }
+
+                .about-card {
+                  animation: aboutCardEntry 0.75s cubic-bezier(0.22,1,0.36,1) both;
+                  transform-style: preserve-3d;
+                  transition: transform 0.3s cubic-bezier(0.22,1,0.36,1);
+                  will-change: transform;
+                }
+
+                .about-card-glow {
+                  position: absolute;
+                  inset: -1px;
+                  border-radius: 1rem;
+                  z-index: 0;
+                  background: conic-gradient(
+                    from 0deg,
+                    transparent 20%,
+                    var(--accent) 40%,
+                    var(--green) 60%,
+                    transparent 80%
+                  );
+                  animation: aboutGlowPulse 3s ease-in-out infinite;
+                }
+
+                .about-card-img img {
+                  transition: transform 0.5s cubic-bezier(0.22,1,0.36,1);
+                  will-change: transform;
+                }
+
+                .about-card:hover .about-card-img img {
+                  transform: scale(1.04);
+                }
+
+                .about-spotlight {
+                  position: absolute;
+                  inset: 0;
+                  border-radius: inherit;
+                  pointer-events: none;
+                  z-index: 20;
+                  opacity: 0;
+                  transition: opacity 0.3s;
+                  background: radial-gradient(
+                    260px circle at var(--mx,50%) var(--my,50%),
+                    rgba(255,255,255,0.06),
+                    transparent 70%
+                  );
+                }
+
+                .about-card:hover .about-spotlight {
+                  opacity: 1;
+                }
+
+                .about-card-name {
+                  animation: aboutNameEntry 0.5s cubic-bezier(0.22,1,0.36,1) 0.4s both;
+                }
               `}</style>
 
               <div
                 className="relative"
-                style={{ padding: "1px", borderRadius: "1rem" }}
+                style={{
+                  padding: "1px",
+                  borderRadius: "1rem",
+                }}
               >
                 <div aria-hidden="true" className="about-card-glow" />
+
                 <div
                   ref={cardRef}
                   className="about-card relative rounded-2xl overflow-hidden z-10"
@@ -134,8 +229,8 @@ export default function About() {
                   onMouseLeave={handleMouseLeave}
                 >
                   <div aria-hidden="true" className="about-spotlight" />
+
                   <div className="about-card-img relative overflow-hidden rounded-xl">
-                    {/* ── FIXED: loading="lazy" (below fold), explicit dimensions ── */}
                     <img
                       src={MYImg}
                       alt={`${personal.name} — ${personal.role} from ${personal.location}`}
@@ -147,6 +242,7 @@ export default function About() {
                       height={385}
                     />
                   </div>
+
                   <div
                     className="about-card-name absolute bottom-0 left-0 right-0 rounded-b-xl px-4 py-2.5 flex items-center justify-between"
                     style={{
@@ -164,6 +260,7 @@ export default function About() {
                       >
                         {personal.name}
                       </p>
+
                       <p
                         className="text-[11px] font-medium"
                         style={{ color: "var(--accent-h)" }}
@@ -171,6 +268,7 @@ export default function About() {
                         {personal.role}
                       </p>
                     </div>
+
                     <div
                       className="flex items-center gap-1.5 px-2.5 py-1 rounded-full"
                       style={{
@@ -184,6 +282,7 @@ export default function About() {
                         className="w-1.5 h-1.5 rounded-full bg-emerald-400"
                         style={{ animation: "blink 1.5s ease infinite" }}
                       />
+
                       <span
                         className="text-[10px] font-bold"
                         style={{ color: "var(--green)" }}
@@ -204,6 +303,7 @@ export default function About() {
             >
               {socials.map((s) => {
                 const Icon = SOCIAL_ICONS[s.icon];
+
                 return (
                   <a
                     key={s.name}
@@ -228,7 +328,7 @@ export default function About() {
             </div>
           </div>
 
-          {/* ── Text Content ── */}
+          {/* About text and contact information */}
           <div className="flex flex-col gap-7">
             <p
               className="text-[1rem] leading-[1.9]"
@@ -236,12 +336,29 @@ export default function About() {
             >
               {personal.Aboutbio}
             </p>
+
             <dl className="grid grid-cols-1 sm:grid-cols-2 gap-3">
               {[
-                { label: "Location", value: personal.location, icon: "📍" },
-                { label: "Email", value: personal.email, icon: "✉️" },
-                { label: "Phone", value: personal.phone, icon: "📞" },
-                { label: "Status", value: personal.status, icon: "💼" },
+                {
+                  label: "Location",
+                  value: personal.location,
+                  icon: "📍",
+                },
+                {
+                  label: "Email",
+                  value: personal.email,
+                  icon: "✉️",
+                },
+                {
+                  label: "Phone",
+                  value: personal.phone,
+                  icon: "📞",
+                },
+                {
+                  label: "Status",
+                  value: personal.status,
+                  icon: "💼",
+                },
               ].map((item) => (
                 <div
                   key={item.label}
@@ -263,6 +380,7 @@ export default function About() {
                   >
                     {item.icon}
                   </div>
+
                   <div className="min-w-0">
                     <dt
                       className="text-[10px] uppercase tracking-wider font-semibold mb-0.5"
@@ -270,6 +388,7 @@ export default function About() {
                     >
                       {item.label}
                     </dt>
+
                     <dd
                       className="text-[0.82rem] font-semibold truncate"
                       style={{ color: "var(--text1)" }}
@@ -286,3 +405,4 @@ export default function About() {
     </section>
   );
 }
+

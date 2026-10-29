@@ -6,36 +6,52 @@ import { useTheme } from "../../context/ThemeContext";
 const LINKS = [
   { label: "Home", id: "home" },
   { label: "About", id: "about" },
-  { label: "Services", id: "services" },
-  { label: "Skills", id: "skills" },
-  { label: "Journey", id: "journey" },
+  { label: "Education", id: "education" },
   { label: "Projects", id: "projects" },
-  { label: "Contact", id: "contact" },
+  { label: "Skills", id: "skills" },
+  { label: "Achievements", id: "achievements" },
+  { label: "Contact Me", id: "contact" },
 ];
 
 function smoothScroll(id: string): void {
   const scrollNow = () => {
     const el = document.getElementById(id);
+
     if (!el) return false;
+
     const top = el.getBoundingClientRect().top + window.scrollY - 64;
-    window.scrollTo({ top, behavior: "smooth" });
+
+    window.scrollTo({
+      top,
+      behavior: "smooth",
+    });
+
     return true;
   };
 
   if (scrollNow()) return;
+
   let attempts = 0;
+
   const interval = setInterval(() => {
     attempts++;
-    if (scrollNow() || attempts > 15) clearInterval(interval);
+
+    if (scrollNow() || attempts > 15) {
+      clearInterval(interval);
+    }
   }, 100);
 }
 
 export default function Navbar() {
   const scrollY = useScrollY();
-  const SECTION_IDS = LINKS.map((l) => l.id);
+
+  const SECTION_IDS = LINKS.map((link) => link.id);
   const active = useActiveSection(SECTION_IDS);
+
   const { theme, toggle } = useTheme();
+
   const [open, setOpen] = useState(false);
+
   const scrolled = scrollY > 50;
 
   const navBg = scrolled
@@ -47,13 +63,48 @@ export default function Navbar() {
   return (
     <>
       <style>{`
-        @keyframes navSlideDown { from{transform:translateY(-80px);opacity:0} to{transform:translateY(0);opacity:1} }
-        @keyframes mobileMenuIn { from{opacity:0;transform:translateY(-20px) scale(0.95)} to{opacity:1;transform:translateY(0) scale(1)} }
-        @keyframes backdropIn   { from{opacity:0} to{opacity:1} }
-        @keyframes nudgeRight   { 0%,100%{transform:translateX(0)} 50%{transform:translateX(4px)} }
+        @keyframes navSlideDown {
+          from {
+            transform: translateY(-80px);
+            opacity: 0;
+          }
+          to {
+            transform: translateY(0);
+            opacity: 1;
+          }
+        }
+
+        @keyframes mobileMenuIn {
+          from {
+            opacity: 0;
+            transform: translateY(-20px) scale(0.95);
+          }
+          to {
+            opacity: 1;
+            transform: translateY(0) scale(1);
+          }
+        }
+
+        @keyframes backdropIn {
+          from {
+            opacity: 0;
+          }
+          to {
+            opacity: 1;
+          }
+        }
+
+        @keyframes nudgeRight {
+          0%,
+          100% {
+            transform: translateX(0);
+          }
+          50% {
+            transform: translateX(4px);
+          }
+        }
       `}</style>
 
-      {/* ── a11y: role="banner" + aria-label ── */}
       <nav
         role="navigation"
         aria-label="Main navigation"
@@ -69,7 +120,7 @@ export default function Navbar() {
         }}
       >
         <div className="h-full max-w-[1280px] mx-auto px-4 sm:px-6 flex items-center justify-between gap-4">
-          {/* Logo — use button with proper aria */}
+          {/* Logo */}
           <button
             onClick={() => smoothScroll("home")}
             aria-label="Go to home section"
@@ -79,22 +130,23 @@ export default function Navbar() {
               className="text-xl font-black tracking-tight"
               style={{ fontFamily: "var(--font)" }}
             >
-              <span className="g-text">Pawan Tripathi</span>
+              <span className="g-text">Mahi Rupabhinda</span>
             </div>
           </button>
 
-          {/* Desktop nav links */}
+          {/* Desktop navigation links */}
           <ul
             className="hidden xl:flex items-center gap-0.5 flex-1 justify-center"
             role="list"
           >
-            {LINKS.map((l) => {
-              const isActive = active === l.id;
+            {LINKS.map((link) => {
+              const isActive = active === link.id;
+
               return (
-                <li key={l.id}>
+                <li key={link.id}>
                   <button
-                    onClick={() => smoothScroll(l.id)}
-                    aria-label={`Navigate to ${l.label} section`}
+                    onClick={() => smoothScroll(link.id)}
+                    aria-label={`Navigate to ${link.label} section`}
                     aria-current={isActive ? "location" : undefined}
                     className="relative px-3 py-2 text-[13px] font-medium rounded-lg transition-all duration-200"
                     style={{
@@ -103,24 +155,22 @@ export default function Navbar() {
                         ? "rgba(99,102,241,0.08)"
                         : "transparent",
                     }}
-                    onMouseEnter={(e) => {
+                    onMouseEnter={(event) => {
                       if (!isActive) {
-                        (e.currentTarget as HTMLElement).style.color =
-                          "var(--text1)";
-                        (e.currentTarget as HTMLElement).style.background =
+                        event.currentTarget.style.color = "var(--text1)";
+                        event.currentTarget.style.background =
                           "rgba(255,255,255,0.04)";
                       }
                     }}
-                    onMouseLeave={(e) => {
+                    onMouseLeave={(event) => {
                       if (!isActive) {
-                        (e.currentTarget as HTMLElement).style.color =
-                          "var(--text2)";
-                        (e.currentTarget as HTMLElement).style.background =
-                          "transparent";
+                        event.currentTarget.style.color = "var(--text2)";
+                        event.currentTarget.style.background = "transparent";
                       }
                     }}
                   >
-                    <span className="relative z-10">{l.label}</span>
+                    <span className="relative z-10">{link.label}</span>
+
                     <span
                       aria-hidden="true"
                       className="absolute bottom-0.5 left-1/2 -translate-x-1/2 h-[2px] rounded-full"
@@ -136,6 +186,7 @@ export default function Navbar() {
             })}
           </ul>
 
+          {/* Right-side buttons */}
           <div className="flex items-center gap-2 flex-shrink-0">
             {/* Theme toggle */}
             <button
@@ -155,7 +206,7 @@ export default function Navbar() {
               )}
             </button>
 
-            {/* Hire Me CTA */}
+            {/* Hire Me button */}
             <a
               href="#contact"
               className="hidden xl:flex items-center gap-1.5 px-4 py-2 rounded-xl text-[13px] font-bold text-white flex-shrink-0 hover:scale-[1.04] hover:-translate-y-0.5 transition-all duration-200"
@@ -164,7 +215,7 @@ export default function Navbar() {
                   "linear-gradient(135deg,var(--accent),var(--accent-h))",
                 boxShadow: "0 4px 16px var(--accent-glow)",
               }}
-              aria-label="Hire Pawan Tripathi — go to contact section"
+              aria-label="Contact Mahi Rupabhinda"
             >
               Hire Me{" "}
               <span
@@ -180,7 +231,7 @@ export default function Navbar() {
 
             {/* Mobile menu button */}
             <button
-              onClick={() => setOpen((o) => !o)}
+              onClick={() => setOpen((current) => !current)}
               className="xl:hidden w-9 h-9 rounded-xl flex items-center justify-center neu-sm hover:scale-110 transition-transform duration-200"
               style={{ color: "var(--text2)" }}
               aria-label={
@@ -214,7 +265,7 @@ export default function Navbar() {
             aria-hidden="true"
           />
 
-          {/* Menu panel */}
+          {/* Mobile menu panel */}
           <div
             id="mobile-menu"
             role="dialog"
@@ -231,27 +282,30 @@ export default function Navbar() {
           >
             <nav aria-label="Mobile navigation">
               <div className="grid grid-cols-2 gap-2 mb-3">
-                {LINKS.map((l, i) => {
-                  const isActive = active === l.id;
+                {LINKS.map((link, index) => {
+                  const isActive = active === link.id;
+
                   return (
                     <button
-                      key={l.id}
+                      key={link.id}
                       onClick={() => {
-                        smoothScroll(l.id);
+                        smoothScroll(link.id);
                         setOpen(false);
                       }}
                       aria-current={isActive ? "location" : undefined}
-                      aria-label={`Go to ${l.label} section`}
+                      aria-label={`Go to ${link.label} section`}
                       className="flex items-center gap-2.5 px-4 py-3 rounded-xl text-sm font-medium text-left transition-all duration-200"
                       style={{
-                        color: isActive ? "var(--accent-h)" : "var(--text2)",
+                        color: isActive
+                          ? "var(--accent-h)"
+                          : "var(--text2)",
                         background: isActive
                           ? "rgba(99,102,241,0.12)"
                           : "rgba(255,255,255,0.02)",
                         border: isActive
                           ? "1px solid rgba(99,102,241,0.25)"
                           : "1px solid var(--border)",
-                        animationDelay: `${i * 0.04}s`,
+                        animationDelay: `${index * 0.04}s`,
                       }}
                     >
                       <span
@@ -266,16 +320,19 @@ export default function Navbar() {
                             : "none",
                         }}
                       />
-                      {l.label}
+
+                      {link.label}
                     </button>
                   );
                 })}
               </div>
+
               <div
                 className="h-px my-3"
                 style={{ background: "var(--border)" }}
                 aria-hidden="true"
               />
+
               <a
                 href="#contact"
                 onClick={() => setOpen(false)}
@@ -285,7 +342,7 @@ export default function Navbar() {
                     "linear-gradient(135deg,var(--accent),var(--accent-h))",
                   boxShadow: "0 4px 16px var(--accent-glow)",
                 }}
-                aria-label="Hire Pawan Tripathi — contact section"
+                aria-label="Contact Mahi Rupabhinda"
               >
                 <span aria-hidden="true">📧</span> Hire Me →
               </a>

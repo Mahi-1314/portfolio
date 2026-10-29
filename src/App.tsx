@@ -1,21 +1,21 @@
+
 import { Suspense, lazy } from "react";
 import { ThemeProvider } from "./context/ThemeContext";
 import { useScrollProgress } from "./hooks/index";
-import MarqueeBar from "./components/ui/MarqueeBar";
 import Navbar from "./components/layout/Navbar";
-import { ScrollToTop } from "./components/layout/Footer";
-import Footer from "./components/layout/Footer";
+
 import Hero from "./components/sections/Hero";
 
-// ── Lazy load all below-the-fold sections (reduces initial JS parse time) ──
+// Lazy-loaded sections
 const About = lazy(() => import("./components/sections/About"));
-const Services = lazy(() => import("./components/sections/Services"));
-const Skills = lazy(() => import("./components/sections/Skills"));
-const Edu_Exp = lazy(() => import("./components/sections/Journey"));
+const Education = lazy(() => import("./components/sections/Journey"));
 const Projects = lazy(() => import("./components/sections/Projects"));
+const Skills = lazy(() => import("./components/sections/Skills"));
+const Achievements = lazy(
+  () => import("./components/sections/Certifications")
+);
 const Contact = lazy(() => import("./components/sections/Contact"));
 
-// ── Lightweight skeleton — avoids layout shift during lazy load ──
 function Skeleton() {
   return (
     <div className="section-wrap" aria-hidden="true">
@@ -30,6 +30,7 @@ function Skeleton() {
             }}
           />
         ))}
+
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mt-6">
           {[1, 2, 3, 4, 5, 6].map((i) => (
             <div
@@ -44,9 +45,9 @@ function Skeleton() {
   );
 }
 
-// ── Scroll progress bar at top ──
 function ProgressBar() {
   const p = useScrollProgress();
+
   return (
     <div
       className="fixed top-0 left-0 z-[300] h-[3px] rounded-r-full"
@@ -68,7 +69,7 @@ function Inner() {
     <>
       <ProgressBar />
       <Navbar />
-      {/* ── a11y: skip to main content link ── */}
+
       <a
         href="#main-content"
         className="sr-only focus:not-sr-only focus:absolute focus:top-20 focus:left-4 focus:z-[400] focus:px-4 focus:py-2 focus:rounded-lg focus:text-white focus:font-bold"
@@ -78,30 +79,40 @@ function Inner() {
       </a>
 
       <main id="main-content">
+        {/* 1. Home */}
         <Hero />
-        <MarqueeBar />
 
+        {/* 2. About */}
         <Suspense fallback={<Skeleton />}>
           <About />
         </Suspense>
+
+        {/* 3. Education */}
         <Suspense fallback={<Skeleton />}>
-          <Services />
+          <Education />
         </Suspense>
-        <Suspense fallback={<Skeleton />}>
-          <Skills />
-        </Suspense>
-        <Suspense fallback={<Skeleton />}>
-          <Edu_Exp />
-        </Suspense>
+
+        {/* 4. Projects */}
         <Suspense fallback={<Skeleton />}>
           <Projects />
         </Suspense>
+
+        {/* 5. Skills */}
+        <Suspense fallback={<Skeleton />}>
+          <Skills />
+        </Suspense>
+
+        {/* 6. Achievements */}
+        <Suspense fallback={<Skeleton />}>
+          <Achievements />
+        </Suspense>
+
+        {/* 7. Contact Me */}
         <Suspense fallback={<Skeleton />}>
           <Contact />
         </Suspense>
       </main>
-      <Footer />
-      <ScrollToTop />
+
     </>
   );
 }
@@ -113,3 +124,4 @@ export default function App() {
     </ThemeProvider>
   );
 }
+

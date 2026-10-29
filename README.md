@@ -123,7 +123,7 @@ el.style.setProperty("--my", `${(y / rect.height) * 100}%`);
 
 ### Hero Content
 
-Left column: status badge ("Available" — green pulse dot), name ("Pawan Tripathi") with `hero-card-name` fade-up animation, typewriter line with blinking cursor, bio text, 3 stats (75+ Projects, 65+ Repositories, 25+ Technologies), 7 social icon links, 2 CTA buttons (View My Work scrolls to `#projects`, Resume Download links to Google Drive).
+Left column: status badge ("Available" — green pulse dot), name ("Mahi Rupabhinda") with `hero-card-name` fade-up animation, typewriter line with blinking cursor, bio text, 3 stats (75+ Projects, 65+ Repositories, 25+ Technologies), 7 social icon links, 2 CTA buttons (View My Work scrolls to `#projects`, Resume Download links to Google Drive).
 
 Right column: profile photo with `about-card-img img:hover { transform: scale(1.05) }` and the glow ring + spotlight system. All social icons dynamically map from `data/socials` array using a `SOCIAL_ICONS` Record that maps icon name strings to react-icons components.
 
