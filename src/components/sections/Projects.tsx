@@ -57,8 +57,15 @@ const PROJECT_DISPLAY: Record<
 
 const displayProjects = projectsData.slice(0, 4);
 
-function PatternBg({ pattern, accent }: { pattern: string; accent: string }) {
+function PatternBg({
+  pattern,
+  accent,
+}: {
+  pattern: string;
+  accent: string;
+}) {
   const opacity = 0.35;
+
   if (pattern === "grid") {
     return (
       <div
@@ -71,6 +78,7 @@ function PatternBg({ pattern, accent }: { pattern: string; accent: string }) {
       />
     );
   }
+
   if (pattern === "lines") {
     return (
       <div
@@ -82,6 +90,7 @@ function PatternBg({ pattern, accent }: { pattern: string; accent: string }) {
       />
     );
   }
+
   if (pattern === "circles") {
     return (
       <div
@@ -94,7 +103,8 @@ function PatternBg({ pattern, accent }: { pattern: string; accent: string }) {
       />
     );
   }
-  // mesh — pure CSS, no SVG
+
+  // Mesh — pure CSS, no SVG
   return (
     <div
       className="absolute inset-0"
@@ -147,7 +157,7 @@ function ProjectCard({
         }}
       />
 
-      {/* Image area — top 45% */}
+      {/* Image area */}
       {hasImage ? (
         <>
           <div
@@ -159,7 +169,8 @@ function ProjectCard({
               alt={project.title}
               className="w-full h-full object-cover object-top transition-transform duration-700 group-hover:scale-105"
             />
-            {/* number badge over image */}
+
+            {/* Number badge over image */}
             <div className="absolute top-3 left-4">
               <span
                 className="font-mono text-[10px] tracking-widest px-2 py-1 rounded-full"
@@ -173,7 +184,8 @@ function ProjectCard({
                 {display.num}/{String(total).padStart(2, "0")}
               </span>
             </div>
-            {/* tech badge over image */}
+
+            {/* Tech badge over image */}
             <div className="absolute top-3 right-4">
               <span
                 className="font-mono text-[10px] tracking-wider px-2.5 py-1 rounded-full border"
@@ -188,6 +200,7 @@ function ProjectCard({
               </span>
             </div>
           </div>
+
           {/* Separator */}
           <div
             className="w-full h-px"
@@ -206,6 +219,7 @@ function ProjectCard({
               opacity: 0.9,
             }}
           />
+
           <div className="absolute top-5 left-5 right-5 flex items-center justify-between">
             <span
               className="font-mono text-[10px] tracking-widest"
@@ -213,6 +227,7 @@ function ProjectCard({
             >
               {display.num}/{String(total).padStart(2, "0")}
             </span>
+
             <span
               className="font-mono text-[10px] tracking-wider px-2.5 py-1 rounded-full border"
               style={{
@@ -250,7 +265,7 @@ function ProjectCard({
             style={{ background: display.accent }}
           />
 
-          {/* Desc */}
+          {/* Description */}
           <p
             className="text-xs leading-relaxed line-clamp-3"
             style={{ color: "var(--text2)" }}
@@ -290,6 +305,7 @@ function ProjectCard({
                 className="w-5 h-px transition-all duration-300 group-hover/live:w-8"
                 style={{ background: display.accent }}
               />
+
               <span
                 className="font-mono text-[10px] tracking-widest uppercase flex items-center gap-1 transition-opacity duration-200 group-hover/live:opacity-80"
                 style={{ color: display.accent }}
@@ -342,11 +358,12 @@ export default function ProjectsSection() {
     const section = sectionRef.current;
     const rail = railRef.current;
     const wrap = wrapRef.current;
+
     if (!section || !rail || !wrap) return;
 
     const getScrollAmount = () => -(rail.scrollWidth - window.innerWidth + 96);
 
-    // GSAP matchMedia — desktop only (≥768px), mobile untouched
+    // GSAP matchMedia — desktop only (≥426px), mobile untouched
     const mm = gsap.matchMedia();
 
     mm.add("(min-width: 426px)", () => {
@@ -362,6 +379,7 @@ export default function ProjectsSection() {
             invalidateOnRefresh: true,
           },
         });
+
         tl.to(rail, { x: () => getScrollAmount(), ease: "none" });
       }, section);
 
@@ -380,6 +398,7 @@ export default function ProjectsSection() {
       className="relative md:overflow-hidden"
       style={{ background: "var(--bg1)" }}
     >
+      {/* Desktop and tablet layout */}
       <div
         className="hidden min-[426px]:flex flex-col"
         style={{ minHeight: "100vh" }}
@@ -405,13 +424,18 @@ export default function ProjectsSection() {
             />
             Selected Work
           </div>
+
           <div className="flex items-end justify-between flex-wrap gap-3">
             <h2
               className="font-black leading-tight tracking-tight text-[clamp(2rem,4.5vw,3.2rem)]"
-              style={{ fontFamily: "var(--font)", color: "var(--text1)" }}
+              style={{
+                fontFamily: "var(--font)",
+                color: "var(--text1)",
+              }}
             >
               Things I&apos;ve <span className="g-text">built</span>.
             </h2>
+
             <p
               className="text-sm leading-[1.85] max-w-xs"
               style={{ color: "var(--text2)" }}
@@ -440,6 +464,7 @@ export default function ProjectsSection() {
                 accentDim: "rgba(99,102,241,0.12)",
                 accentDimLight: "rgba(99,102,241,0.07)",
               };
+
               return (
                 <ProjectCard
                   key={p.id}
@@ -449,72 +474,11 @@ export default function ProjectsSection() {
                 />
               );
             })}
-
-            {/* More Projects CTA */}
-            <a
-              href="https://github.com/tripathipawan"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="relative flex-shrink-0 w-[260px] h-[58vh] min-h-[440px] max-h-[580px] rounded-2xl overflow-hidden flex flex-col items-center justify-center hover:scale-[1.02] transition-transform duration-300"
-              style={{
-                background: "var(--bg2)",
-                border: "1px solid var(--border)",
-                boxShadow: "0 2px 16px rgba(0,0,0,0.08)",
-              }}
-            >
-              <div
-                className="absolute inset-0 opacity-0 hover:opacity-100 transition-opacity duration-500"
-                style={{
-                  background:
-                    "radial-gradient(ellipse at 50% 50%, rgba(99,102,241,0.08), transparent 70%)",
-                }}
-              />
-              <div className="text-center p-8 relative z-10">
-                <div
-                  className="w-14 h-14 rounded-full flex items-center justify-center mx-auto mb-6"
-                  style={{
-                    background:
-                      "linear-gradient(135deg, rgba(99,102,241,0.15), rgba(129,140,248,0.1))",
-                    border: "1px solid rgba(99,102,241,0.3)",
-                  }}
-                >
-                  <FaGithub size={20} style={{ color: "var(--text2)" }} />
-                </div>
-                <p
-                  className="font-bold text-2xl mb-1"
-                  style={{ fontFamily: "var(--font)", color: "var(--text2)" }}
-                >
-                  More on
-                </p>
-                <p
-                  className="font-bold text-2xl italic g-text mb-4"
-                  style={{ fontFamily: "var(--font)" }}
-                >
-                  GitHub
-                </p>
-                <div
-                  className="inline-flex items-center gap-2 px-4 py-2 rounded-full text-[11px] font-mono tracking-wider border"
-                  style={{
-                    borderColor: "rgba(99,102,241,0.3)",
-                    color: "var(--accent-h)",
-                    background: "rgba(99,102,241,0.08)",
-                  }}
-                >
-                  <FaGithub size={13} />
-                  65+ Repositories
-                </div>
-                <p
-                  className="font-mono text-[10px] tracking-widest mt-4 uppercase"
-                  style={{ color: "var(--text3)" }}
-                >
-                  View all projects →
-                </p>
-              </div>
-            </a>
           </div>
         </div>
       </div>
 
+      {/* Mobile layout */}
       <div className="flex flex-col min-[426px]:hidden px-4 pt-16 pb-10">
         {/* Heading */}
         <div className="mb-8">
@@ -528,12 +492,17 @@ export default function ProjectsSection() {
             />
             Selected Work
           </div>
+
           <h2
             className="font-black leading-tight tracking-tight text-[clamp(2rem,8vw,3rem)] mb-2"
-            style={{ fontFamily: "var(--font)", color: "var(--text1)" }}
+            style={{
+              fontFamily: "var(--font)",
+              color: "var(--text1)",
+            }}
           >
             Things I&apos;ve <span className="g-text italic">built</span>.
           </h2>
+
           <p
             className="text-sm leading-[1.85]"
             style={{ color: "var(--text2)" }}
@@ -542,7 +511,7 @@ export default function ProjectsSection() {
           </p>
         </div>
 
-        {/* Cards — vertical stack */}
+        {/* Project cards — vertical stack */}
         <div className="flex flex-col gap-4">
           {displayProjects.map((p, i) => {
             const display = PROJECT_DISPLAY[p.id] ?? {
@@ -552,6 +521,7 @@ export default function ProjectsSection() {
               accentDim: "rgba(99,102,241,0.12)",
               accentDimLight: "rgba(99,102,241,0.07)",
             };
+
             return (
               <ProjectCard
                 key={p.id}
@@ -561,44 +531,6 @@ export default function ProjectsSection() {
               />
             );
           })}
-
-          <a
-            href="https://github.com/tripathipawan"
-            target="_blank"
-            rel="noopener noreferrer"
-            className="relative w-full rounded-2xl overflow-hidden flex flex-col items-center justify-center py-10 transition-transform duration-300 active:scale-[0.98]"
-            style={{ border: "1px dashed var(--border)", minHeight: "160px" }}
-          >
-            <div className="text-center px-6">
-              <div
-                className="w-12 h-12 rounded-full flex items-center justify-center mx-auto mb-4"
-                style={{
-                  background:
-                    "linear-gradient(135deg, rgba(99,102,241,0.15), rgba(129,140,248,0.1))",
-                  border: "1px solid rgba(99,102,241,0.3)",
-                }}
-              >
-                <FaGithub size={18} style={{ color: "var(--text2)" }} />
-              </div>
-              <p
-                className="font-bold text-xl mb-1"
-                style={{ fontFamily: "var(--font)", color: "var(--text2)" }}
-              >
-                More on <span className="g-text italic">GitHub</span>
-              </p>
-              <div
-                className="inline-flex items-center gap-2 mt-3 px-4 py-2 rounded-full text-[11px] font-mono tracking-wider border"
-                style={{
-                  borderColor: "rgba(99,102,241,0.3)",
-                  color: "var(--accent-h)",
-                  background: "rgba(99,102,241,0.08)",
-                }}
-              >
-                <FaGithub size={12} />
-                65+ Repositories
-              </div>
-            </div>
-          </a>
         </div>
       </div>
     </section>
