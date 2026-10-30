@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import type { IconType } from "react-icons";
-import { personal, phrases, socials, stats, Resume } from "../../data/index";
+import { personal, phrases, socials, Resume } from "../../data/index";
 import {
   FaGithub,
   FaLinkedin,
@@ -69,10 +69,8 @@ export default function Hero() {
     >
       <div className="section-wrap w-full relative z-10 py-24">
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-10 lg:gap-12 items-center">
-
           {/* Left: Text Content */}
           <div className="flex flex-col gap-5 order-2 lg:order-1 items-center lg:items-start text-center lg:text-left">
-
             {/* Availability Badge */}
             <div
               role="status"
@@ -172,41 +170,6 @@ export default function Hero() {
               </a>
             </div>
 
-            {/* Stats */}
-            <div
-              className="flex flex-wrap gap-3 justify-center lg:justify-start"
-              role="list"
-              aria-label="Portfolio statistics"
-            >
-              {stats.map((s) => (
-                <div
-                  key={s.label}
-                  role="listitem"
-                  className="flex flex-col items-center px-4 py-3 rounded-xl"
-                  style={{
-                    background: "var(--bg2)",
-                    border: "1px solid var(--border)",
-                  }}
-                >
-                  <span
-                    className="font-black text-lg g-text leading-none"
-                    style={{ fontFamily: "var(--font)" }}
-                    aria-label={`${s.value} ${s.label}`}
-                  >
-                    {s.value}
-                  </span>
-
-                  <span
-                    aria-hidden="true"
-                    className="text-[9px] font-semibold uppercase tracking-wider mt-1"
-                    style={{ color: "var(--text3)" }}
-                  >
-                    {s.label}
-                  </span>
-                </div>
-              ))}
-            </div>
-
             {/* Social Links */}
             <div
               className="flex flex-wrap gap-2 justify-center lg:justify-start"
@@ -240,11 +203,8 @@ export default function Hero() {
           </div>
 
           {/* Right: Profile Image */}
-      <div className="order-1 lg:order-2 flex justify-center lg:justify-end">
-            <div
-              className="relative w-full"
-              style={{ maxWidth: "300px" }}
-            >
+          <div className="order-1 lg:order-2 flex justify-center lg:justify-end">
+            <div className="relative w-full" style={{ maxWidth: "300px" }}>
               <div
                 className="overflow-hidden rounded-[1.5rem]"
                 style={{
